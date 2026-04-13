@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+*.swo
+
+# Claude Code
+.claude/
+
+# User's personal workspace data
+**/workspace/
+
+# Memory storage (user's session data, not samples)
+memory/kei/*.md
+memory/l/*.md
+memory/misao/*.md
+!memory/archive.md
+!memory/index.md

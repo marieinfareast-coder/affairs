@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "notebooklm": {
+      "command": "npx",
+      "args": [
+        "notebooklm-mcp@latest"
+      ],
+      "env": {
+        "NOTEBOOKLM_DATA_DIR": "${NOTEBOOKLM_DATA_DIR}"
+      }
+    }
+  }
+}
