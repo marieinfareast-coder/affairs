@@ -56,17 +56,47 @@
 | old_archives.md | all | 過去作参照（遅延読み込み：必要時にReadで参照） |
 
 ## 起動方法
-各メンバーは Agent tool で以下のように起動する:
+
+### 推奨：Team方式
+
+Claude CodeのTeam機能を使い、慧をオーケストレーターとして各メンバーが常駐する形で運用する。
+
+1. `TeamCreate` でチームを作成
+2. 慧（kei）を最初に起動。慧がオーケストレーターとして他メンバーへの指示・品質判定を担う
+3. 各メンバー（ota, masamichi, akira, tachibana, miyabe, satoshi）をTeamメンバーとして起動
+4. 慧が `SendMessage` で各メンバーにタスクを送り、結果を受け取って次に渡す
+
+```
+TeamCreate: team_name="kei-session"
+
+Agent: name="kei",  team_name="kei-session", model=opus
+Agent: name="ota",  team_name="kei-session", model=sonnet
+Agent: name="masamichi", team_name="kei-session", model=opus
+...
+```
+
+メンバーの起動プロンプトには各agent.mdの内容とタスク指示を渡す。
+
+### フォールバック：Agent方式
+
+Team機能が利用できない環境では、各メンバーを個別のAgent（サブエージェント）として起動する。
+
 - subagent_type: "general-purpose"
 - model: 各メンバーの指定モデル（上記ポリシー参照）
 - prompt: 各メンバーの agent.md の内容 + タスク指示
+
+この方式ではメンバー間の直接通信はできないため、オーケストレーター（親プロセス）が中継する。
+
+### 既知の問題
+
+Google Drive同期環境（`.claude` ディレクトリがDrive同期対象に含まれる場合）では、Team機能の `SendMessage` で `EEXIST` エラーが発生することがある。この場合はAgent方式にフォールバックするか、`.claude` をDrive同期対象から除外すること。
 
 ### トークン節約のための必須ルール
 
 - **ナレッジファイルの中身をプロンプトに埋め込まない**。パスだけ指示し、Agent自身にReadで取得させる
 - 「起動時にAgent自身がRead」とマークされたファイル → agent.mdにパスが書いてあるので、Agent起動後に自分で読む
 - 「遅延読み込み」とマークされたファイル → タスク遂行中に必要になった時点でReadで参照する
-- Character_Backgrounds_Master.md、old_archives.md は起動プロンプトに含めない
+- Character_Backgrounds_Master.md は起動プロンプトに含めない
 
 ## 共通Skill
 | Skill | 定義ファイル | 機能 |
